@@ -53,7 +53,8 @@ tuple<int,int, vector<string>> futbol(vector<string> &PI, int i, vector<int> &di
                 PI.pop_back();
                 if((get<0>(candidato) > get<0>(maxActual))
                 || (get<0>(candidato)==get<0>(maxActual) && get<1>(candidato) > get<1>(maxActual))
-                ){ //|| (get<0>(candidato)==get<0>(maxActual) && get<1>(candidato) == get<1>(candidato) && esMenor(get<2>(candidato), get<2>(maxActual)))
+                || (get<0>(candidato)==get<0>(maxActual) && get<1>(candidato) == get<1>(candidato) && esMenor(get<2>(candidato), get<2>(maxActual)))
+                ){ //
                     maxActual = candidato;
                 }
             }
