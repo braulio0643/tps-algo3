@@ -25,7 +25,7 @@ void crearMaxPosible(vector<tuple<int,int,string>> &s, int n){
     for(i = 1; i < n; i++){
         key = (copia[i]);
         j = i-1;
-        while(j>= 0 && get<0>(s[j]) < get<0>(key)){
+        while(j>= 0 && get<0>(copia[j]) < get<0>(key)){
             copia[j+1] = copia[j];
             j= j-1;
         }
@@ -75,8 +75,6 @@ void sortNombres(vector<tuple<int,int,string>> &s, int n){
 }
 
 tuple<int,int, vector<string>> futbol(vector<string> &PI, int i, vector<int> &disponible, int sumaAtaque, int sumaDefensa){
-       //para verificar el orden lexico, que conviene mas? Verificar en la recursion, o ordenar el arreglo de ataque al final del ejercicio? 
-    //(antes de devolver el output)
     
     if(i==10){
         tuple<int,int,vector<string>> res(sumaAtaque, sumaDefensa, PI);
@@ -87,17 +85,22 @@ tuple<int,int, vector<string>> futbol(vector<string> &PI, int i, vector<int> &di
         || (i >= 5 && sumaDefensa + maxDefensa < get<1>(maxActual))
         ){
             return maxActual;
+            
         }
         for(int j = 0; j < 10; j++){
             if(disponible[j] == 1){
-                disponible[j] = 0;
-                PI.push_back(get<2>(jugadores[j]));
                 tuple<int,int, vector<string>> candidato;
+                
                 if (i < 5){
-                    
+                    disponible[j] = 0;
+                    PI.push_back(get<2>(jugadores[j]));
                     candidato = futbol(PI, i+1, disponible, sumaAtaque + get<0>(jugadores[j]), sumaDefensa);
+                
+                    disponible[j] = 1;
+                    PI.pop_back();
                     
                 } else {
+                
                     vector<string> PICandidato = PI;
                     int sumaDefensaCandidata = 0;
                     for(int k = 0; k < 10; k++){
@@ -110,11 +113,10 @@ tuple<int,int, vector<string>> futbol(vector<string> &PI, int i, vector<int> &di
                     candidato = resultado;
                     
                 }
-                disponible[j] = 1;
-                PI.pop_back();
                 if((get<0>(candidato) > get<0>(maxActual))
                 || (get<0>(candidato)==get<0>(maxActual) && get<1>(candidato) > get<1>(maxActual))
                 ){ //
+                    
                     maxActual = candidato;
                 }
             }
@@ -181,5 +183,5 @@ int main(){
         cout << defensores[4] << ")" << endl;
         caso++;
     }
-    
+    return 0;
 }
