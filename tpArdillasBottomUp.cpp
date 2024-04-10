@@ -14,69 +14,71 @@ vector<vector<int>> arboles;
 int C, t, h, f, a, bellota;
 
 vector<vector<int>> resultados;
-vector<int> vectorArbol;
+vector<int> vectorAltura;
+vector<int> maxPorAltura;
 
 #define INF numeric_limits<int>::min();
-//sacar el if y probar el max entre todos los arboles?
 
-int acorn(int altura, int arbol){
-
-    for(int i = 0; i < resultados[0].size(); i++){
-        resultados[0][i] = 0;
-    }
-    for(int k = 1; k <= altura; k++){
-        for(int l = 0; l < resultados[0].size(); l++){
-            int max = 0;
-            for(int i = 0; i < arboles.size(); i++){
-                int candidato;
-                if(k == h+1){
-                    candidato = resultados[k-1][i];
-                } else if(i == l){
-                    candidato = arboles[l][k] + resultados[k-1][i];
-                } else if (k-f >= 0){
-                    candidato = arboles[l][k] + resultados[k-f][i];
-                }
-                if(candidato > max){
-                    max = candidato;
-                }
-            }
-            resultados[k][l] = max;
+int acorn(){
+    for (int i = 0; i < t; i++) { 
+        for (int j = 1; j <= h; j++) { 
+            resultados[i][j] += resultados[i][j-1];
+            maxPorAltura[j] = max(maxPorAltura[j], resultados[i][j]);
+        } 
+    } 
+   
+    for (int j = f+1; j <= h; j++) { 
+        int maxLocal = maxPorAltura[j];
+        for (int i = 0; i < t; i++) {
+            resultados[i][j] = max(maxPorAltura[j-f]+ arboles[i][j], resultados[i][j-1] + arboles[i][j]); 
+            maxLocal = max(maxLocal, resultados[i][j]);
+            resultados[i][j+1] = resultados[i][j] + arboles[i][j+1];
         }
+        maxPorAltura[j] = maxLocal;
     }
-    
-    return resultados[altura][arbol];
+
+    int maxTotal = 0;
+    for (int i = 0; i < t; i++) {
+        maxTotal = max(maxTotal, resultados[i][h]);
+    }
+    return maxTotal;
+
 }
+
 
 int main() {
     ios_base::sync_with_stdio(false);
 
-    ofstream fileOut("output.txt");
+   /*   ofstream fileOut("output.txt");
     cout.rdbuf(fileOut.rdbuf());
     ifstream fileIn("input.txt");
-    cin.rdbuf(fileIn.rdbuf());
+    cin.rdbuf(fileIn.rdbuf());     */
 
     cin >> C;
     int caso = 1;
     while(caso <= C){
         cin >> t >> h >> f;
         for(int i = 0; i < t; i++){
-            vector<int> arbol(h+1, 0);
+            vector<int> arbol(h+2, 0);
             cin >> a;
+            int suma = 0;
             for(int j = 0; j < a; j++){
                 cin >> bellota;
                 arbol[bellota]++;
             }
-            arboles.push_back(arbol);
+            arboles.push_back(arbol);  
         }
 
-        for(int i = 0; i <= h +1; i++){
-            vector<int> vectorArbol(t, 0);
-            resultados.push_back(vectorArbol);
+        for(int i = 0; i <=h ; i++){
+            maxPorAltura.push_back(0);
         }
-
-        cout << acorn(h+1,0) << endl;
+        resultados = arboles;
+        cout << acorn() << endl;
         resultados= {};
         arboles = {};
+        maxPorAltura = {};
         caso++;
     }
+    int cero;
+    cin >> cero;
 }
