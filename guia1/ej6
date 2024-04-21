@@ -1,0 +1,88 @@
+d y e)
+
+Se puede ver claramente que hay superposición de problemas: por ejemplo, en una rama se descarta el primer billete, y luego se usa el segundo. 
+En la otra rama se usa el primer billete y también el segundo. En ambos casos se termina usando cc(3, j- B[2]) (llamado en el que se usa el segundo billete).
+Tener guardado este resultado para la segunda vez nos mejoraria bastante la complejidad. Por lo tanto, defino la siguiente estructura de memorización.
+array<tuple(int,int)> arrayJ(j+1, (-1,-1))
+array<array<tuple(int,int)>> resultados(N+1, arrayJ)
+
+Es decir, una matriz de N x J.
+Luego, a modificar el algoritmo en torno a la memorización. Notar que en el caso recursivo se verifica si (j - B[i] < 0), ya que si queda negativo, 
+no podríamos acceder a dicho índice desde la matriz de resultados, por lo tanto se pasa de j- B[i] a 0, que no afecta el resultado ya que 
+aunque sea menor o igual a 0, en el caso base se devuelve (0,0).
+
+cc(array B, int i, int j){
+    if(j <=0){
+        resultados[i][j] = (0,0)
+    } 
+    if(i == N){
+        resultados[i][j] = (INF,INF)
+    }
+    if(resultados[i][j] == (-1,-1)){
+        tuple(int,int) llamadoCon;
+        if(j- B[i] < 0){
+            llamadoCon = cc(i+1,0) 
+        } else {
+            llamadoCon = cc(i+1, j - B[i])
+        }
+        tuple(int,int) candidatoCon = (B[i] + llamadoCon.first; 1 + llamadoCon.second)
+        tuple(int,int) candidatoSin = cc(i+1, j)
+
+
+        if(candidatoCon.first < candidatoSin.first){
+            resultados[i][j] = candidatoCon
+        }else if(candidatoCon.first > candidatoSin.first){
+            resultados[i][j] = candidatoSin
+        } else if(candidatoCon.first == candidatoSin.first){
+            if(candidatoCon.second > candidatoSin.second){
+                resultados[i][j] = candidatoSin
+            } else {
+                resultados[i][j] = candidatoCon
+            }
+        }
+    }   
+
+    return resultados[i][j]
+}
+
+f) la llamda que resuewlve nuestro problema es cc(0, j). La complejidad espacial es de O(N.J), y la complejidad temporal es de O(N.J)
+
+
+cc(array B, int i, int j){
+    int m = resultados.size() -1
+    int n = resultados[0].size() -1
+
+    for(int k = 0; k < resultados.size(); k++){
+        resultados[k][0] = (0,0)
+    }
+    
+    for(int k = 1; k < resultados[0].size(); k++){ //empiezo en 1 xq resultados[0][0] ya se definio en el for anterior
+        resultados[N][k] = (INF,INF)
+    }
+
+    for(int k = resultados.size()-2; k >= 0; k--){
+        for(int h = resultados[0].size() -1; h >= 0; h--){
+            tuple(int,int) llamadoCon;
+            if(h- B[k] < 0){
+                llamadoCon = resultados[k+1][0]
+            } else {
+                llamadoCon = resultados[k+1][h-b[K]]
+            }
+            tuple(int,int) candidatoCon = (B[k] + llamadoCon.first; 1 + llamadoCon.second)
+            tuple(int,int) candidatoSin = resultados[k+1][h]
+            if(candidatoCon.first < candidatoSin.first){
+                resultados[k][h] = candidatoCon
+            }else if(candidatoCon.first > candidatoSin.first){
+                resultados[k][h] = candidatoSin
+            } else if(candidatoCon.first == candidatoSin.first){
+                if(candidatoCon.second > candidatoSin.second){
+                    resultados[k][h] = candidatoSin
+                } else {
+                    resultados[k][h] = candidatoCon
+                }
+            }
+        }   
+    }
+
+    return resultados[i][j]
+}

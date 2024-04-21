@@ -1,0 +1,4 @@
+b)
+return 0      si c == 0 && j == N
+return -INF   si c < 0 V c > j V (c > 0 && i == 0)
+return max(cc(j+1,c-1) + p[j]; cc(j+1,c+1) - p[j]; cc(j+1,c))  en otro caso

@@ -1,0 +1,130 @@
+Necesito ayuda con otro ejercicio:
+In the first morning of every summer, when the first ray of sunlight breaks into the oak forest, Jayjay,
+the flying squirrel, quickly climbs to the top of an oak tree in the forest. From there, he starts his
+descent to the ground, and tries to gather as many acorns from the trees on his way down. Being a
+flying squirrel, Jayjay can choose, at any moment, to climb down the tree trunk or to fly from one tree
+to any other tree on his descending journey. However, he loses f feet of height every time he flies from
+one tree to another.
+Suppose the forest has t oak trees, and all the trees have the same height of h feet. Given the height
+of every acorn on each tree, write a program to compute the maximal possible number of acorns Jayjay
+can collect by choosing a tree to climb and descend as described.
+Figure 2: Example of oak trees with acorns.
+Figure 2 shows an example of t = 3
+oak trees with three, six, and five acorns,
+respectively. The white circles and grey
+line indicate a path for Jayjay to col-
+lect the maximal possible number of eight
+acorns, assuming that the height he loses
+for each flight is f = 2.
+Input
+The input consists of a line containing
+the number c of datasets, followed by c
+datasets, followed by a line containing the
+number ‘0’.
+The first line of each dataset contains
+three integers, t, h, f , separated by a
+blank. The first integer t is the number of
+oak trees in the forest. The second integer
+h is the height (in feet) of all the oak trees.
+The third integer, f , is the height (in feet)
+that Jayjay loses every time he flies from
+one tree to another. You may assume that
+1 ≤ t, h ≤ 2000, and 1 ≤ f ≤ 500.
+The first line of each dataset is fol-
+lowed by t lines. The i-th line specifies the height of every acorn on the i-th tree. The line begins
+with a non-negative integer a that specifies how many acorns the i-th tree has. Each of the following a
+integers n indicates that an acorn is at height n on the i-th tree. The positive integers in each line are
+sorted in ascending order, and repetitions are allowed. Thus, there can be more than one acorn at the
+same height on the same tree. You can assume that 0 ≤ a ≤ 2000, for each i.
+Output
+The output consists of one line for each dataset. The c-th line contains one single integer, which is the
+maximal possible number of acorns Jayjay can collect in one single descent for dataset c.
+Note: The dataset below and Jayjay’s path to collect the maximal number of 8 acorns are shown in
+Figure 2.
+Sample Input
+1
+3 10 2
+3 1 4 10
+6 3 5 7 8 9 9
+5 3 4 5 6 9
+0
+Sample Output
+8#include <iostream>
+#include <ostream>
+#include <fstream>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <vector>
+#include <algorithm>
+#include <limits>
+
+using namespace std;
+
+vector<vector<int>> arboles;
+int C, t, h, f, a, bellota;
+
+vector<vector<int>> resultados;
+vector<int> vectorAltura;
+vector<int> maxPorAltura;
+
+#define INF numeric_limits<int>::min();
+
+int acorn(){
+    for (int i = 0; i < t; i++) { 
+        for (int j = 1; j <= h; j++) { 
+            resultados[i][j] += resultados[i][j-1];
+            maxPorAltura[j] = max(maxPorAltura[j], resultados[i][j]);
+        } 
+    } 
+    for (int i = 0; i < t; i++) {
+        for (int j = f; j <= h; j++) { 
+        
+                resultados[i][j] = max(maxPorAltura[j-f]+ arboles[i][j], resultados[i][j-1] + arboles[i][j]); 
+        }
+    }
+
+    int maxTotal = 0;
+    for (int i = 0; i < t; i++) {
+        maxTotal = max(maxTotal, resultados[i][h]);
+    }
+    return maxTotal;
+
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+
+       ofstream fileOut("output.txt");
+    cout.rdbuf(fileOut.rdbuf());
+    ifstream fileIn("input.txt");
+    cin.rdbuf(fileIn.rdbuf());   
+
+    cin >> C;
+    int caso = 1;
+    while(caso <= C){
+        cin >> t >> h >> f;
+        for(int i = 0; i < t; i++){
+            vector<int> arbol(h+1, 0);
+            cin >> a;
+            int suma = 0;
+            for(int j = 0; j < a; j++){
+                cin >> bellota;
+                arbol[bellota]++;
+            }
+            arboles.push_back(arbol);  
+        }
+
+        maxPorAltura = {};
+        for(int i = 0; i <=h ; i++){
+            maxPorAltura.push_back(0);
+        }
+        resultados = arboles;
+        cout << acorn() << endl;
+        resultados= {};
+        arboles = {};
+        caso++;
+    }
+}
+Que error tiene mi implementacion Bottom Up? Me pasan 8 de 10 casos de test, debe ser un error muy específico.
